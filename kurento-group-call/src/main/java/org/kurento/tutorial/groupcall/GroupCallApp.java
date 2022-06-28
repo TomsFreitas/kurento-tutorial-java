@@ -35,6 +35,8 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @EnableWebSocket
 public class GroupCallApp implements WebSocketConfigurer {
 
+  private String[] KMS_URL = {"ws://10.0.22.23:8888/kurento", "ws://10.0.22.24:8888/kurento"};
+
   @Bean
   public UserRegistry registry() {
     return new UserRegistry();
@@ -50,9 +52,18 @@ public class GroupCallApp implements WebSocketConfigurer {
     return new CallHandler();
   }
 
+  //@Bean
+  //public KurentoClient kurentoClient() {
+    //return KurentoClient.create();
+  //}
+
   @Bean
-  public KurentoClient kurentoClient() {
-    return KurentoClient.create();
+  public KurentoClient[] kurentoClient_array(){
+    KurentoClient[] clients = new KurentoClient[2];
+    for (int i = 0; i < 2; i++) {
+      clients[i] = KurentoClient.create(KMS_URL[i]);
+    }
+    return clients;
   }
 
   @Bean
@@ -62,7 +73,7 @@ public class GroupCallApp implements WebSocketConfigurer {
     return container;
   }
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     SpringApplication.run(GroupCallApp.class, args);
   }
 
